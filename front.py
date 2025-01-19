@@ -23,38 +23,38 @@ class Dashboard:
 
         # Premier cadre carré
         left_square = tk.Frame(top_frame, width=340, height=150, relief="solid", borderwidth=2)
-        left_square.grid(row=0, column=0, padx=10)  # Place dans la colonne 0 avec un espacement horizontal
+        left_square.grid(row=0, column=0, padx=10)  # Place le cadre à gauche
+        left_square.pack_propagate(False)  # Désactive l'ajustement automatique à son contenu
 
         # Données fictives pour l'affichage
-        hostname_label = tk.Label(left_square, text="Hostname : Harvester-Montpellier", font=("Helvetica", 12))
-        hostname_label.grid(row=0, column=0, padx=10, pady=5)
+        hostname_label = tk.Label(left_square, text="Hostname : Harvester-Montpellier", font=("Helvetica", 12), anchor="w")
+        hostname_label.pack(fill="both", padx=10, pady=5)
 
-        ip_label = tk.Label(left_square, text="Adress IP : 192.168.1.10", font=("Helvetica", 12))
-        ip_label.grid(row=1, column=0, padx=10, pady=5)
+        ip_label = tk.Label(left_square, text="Adress IP : 192.168.1.10", font=("Helvetica", 12), anchor="w")
+        ip_label.pack(fill="both", padx=10, pady=5)
 
-        latence_label = tk.Label(left_square, text="Latence WAN : 32ms", font=("Helvetica", 12))
-        latence_label.grid(row=2, column=0, padx=10, pady=5)
+        latence_label = tk.Label(left_square, text="Latence WAN : 32ms", font=("Helvetica", 12), anchor="w")
+        latence_label.pack(fill="both", padx=10, pady=5)
 
-        devices_label = tk.Label(left_square, text="Machines connectées : 5", font=("Helvetica", 12))
-        devices_label.grid(row=3, column=0, padx=10, pady=5)
+        devices_label = tk.Label(left_square, text="Machines connectées : 5", font=("Helvetica", 12), anchor="w")
+        devices_label.pack(fill="both", padx=10, pady=5)
 
         # Deuxième cadre carré
         right_square = tk.Frame(top_frame, width=340, height=150, relief="solid", borderwidth=2)
-        right_square.grid(row=0, column=1, padx=10)  # Place dans la colonne 1 avec un espacement horizontal
+        right_square.grid(row=0, column=1, padx=10)  # Place le cadre à droite
+        right_square.pack_propagate(False)  # Désactive l'ajustement automatique à son contenu
 
         # Données fictives pour l'affichage
-        version_label = tk.Label(right_square, text="Version Dev", font=("Helvetica", 12))
-        version_label.grid(row=0, column=0, padx=10, pady=5)
+        version_label = tk.Label(right_square, text="Version Dev", font=("Helvetica", 12), anchor="w")
+        version_label.pack(fill="both", padx=10, pady=5)
 
         # Bouton pour vérifier les mises à jour
-        update_button = tk.Button(right_square, text="Vérifier les mises à jour", font=("Helvetica", 12))
-        update_button.grid(row=1, column=0, padx=10, pady=5)
+        update_button = tk.Button(right_square, text="Vérifier la version", font=("Helvetica", 12), anchor="w")
+        update_button.pack(fill="both", padx=10, pady=5)
 
         # Bouton pour lancer un scan
-        scan_button = tk.Button(right_square, text="Lancer un scan", font=("Helvetica", 12))
-        scan_button.grid(row=2, column=0, padx=10, pady=5)
-
-        
+        scan_button = tk.Button(right_square, text="Scan", font=("Helvetica", 12), anchor="w")
+        scan_button.pack(fill="both", padx=10, pady=5)
 
         # Ajout cadre pour résultat du dernier scan
         scan_frame = tk.Frame(self.main_window, relief="groove", borderwidth=2) #cadre avec bordure visualisé
