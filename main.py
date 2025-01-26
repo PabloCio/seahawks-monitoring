@@ -1,6 +1,6 @@
 import tkinter as tk
 from front import Dashboard # Import classe Dashboard
-from back import Backend # Import classe Backend
+from back import Backend# Import classe Backend
 
 
 # Point d'entrée principal
