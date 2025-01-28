@@ -6,7 +6,7 @@ import json
 import os
 
 
-Class Backend 
+class Backend:
 VERSION = "1.3"
 
 @staticmethod
