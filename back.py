@@ -8,7 +8,7 @@ import os
 
 class Backend:
     VERSION = "1.3"
-    
+
     @staticmethod
     def get_info_machine():
         """
@@ -17,81 +17,75 @@ class Backend:
         try:
             hostname = socket.gethostname()
             local_ip = socket.gethostbyname(hostname)
-            version = NetworkScanner.VERSION
-            return {"hostname": hostname, "local_ip": local_ip, "version": version}
+            return (hostname, local_ip, Backend.VERSION)
         except socket.error as e:
-            return {"error": f"Erreur : {e}"}
-    
+            return ("Erreur", f"Erreur : {e}", Backend.VERSION)
+
     @staticmethod
-    def get_all_local_ips():
+    def get_nbr_machines():
         """
-        Retourne toutes les IP locales et leurs interfaces.
-        """
-        ip_list = []
-        try:
-            interfaces = psutil.net_if_addrs()
-            for iface_name, addresses in interfaces.items():
-                for address in addresses:
-                    if address.family == socket.AF_INET:
-                        ip_list.append({"ip": address.address, "interface": iface_name})
-            return ip_list
-        except Exception as e:
-            return [{"error": f"Erreur : {str(e)}"}]
-    
-    @staticmethod
-    def test_google_latency():
-        """
-        Teste la latence du serveur Google (8.8.8.8) et retourne le temps moyen en millisecondes.
+        Retourne un nombre fictif de machines connectées pour l'affichage.
         """
         try:
-            result = subprocess.run(
-                ["ping", "-n", "1", "8.8.8.8"],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                encoding='utf-8',
-                errors="replace"
-            )
-            if result.returncode == 0 and result.stdout:
-                for line in result.stdout.splitlines():
-                    if "temps" in line or "time" in line:
-                        latency_part = line.split("temps=" if "temps" in line else "time=")[1]
-                        latency = latency_part.split("ms")[0].strip()
-                        return int(latency)
-            return None
+            return len(psutil.net_if_addrs())
         except Exception as e:
-            return {"error": f"Erreur lors du test de latence : {e}"}
-    
+            return f"Erreur : {str(e)}"
+
     @staticmethod
-    def run_nmap_scan_on_all_interfaces():
+    def test_wan_latency(label):
         """
-        Effectue un scan réseau sur toutes les interfaces réseau.
+        Teste la latence vers Google et met à jour un label Tkinter avec le résultat.
+        """
+        def update_label():
+            try:
+                result = subprocess.run(
+                    ["ping", "-n", "1", "8.8.8.8"],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True
+                )
+                if result.returncode == 0 and result.stdout:
+                    for line in result.stdout.splitlines():
+                        if "temps" in line or "time" in line:
+                            latency_part = line.split("temps=" if "temps" in line else "time=")[1]
+                            latency = latency_part.split("ms")[0].strip()
+                            label.config(text=f"Latence WAN : {latency} ms")
+                            return
+                label.config(text="Latence WAN : Non mesurable")
+            except Exception as e:
+                label.config(text=f"Erreur de latence : {str(e)}")
+
+        # Appel de la mise à jour dans un thread séparé pour éviter de bloquer l'interface
+        label.after(100, update_label)
+
+    @staticmethod
+    def lancer_scan():
+        """
+        Effectue un scan réseau rapide sur le sous-réseau local et retourne les résultats.
         """
         scanner = nmap.PortScanner()
-        ip_list = NetworkScanner.get_all_local_ips()
-        scan_results = []
-    
+        subnet = "192.168.1.0/24"  # Par défaut, un sous-réseau local
+        results = []
+
         try:
-            for ip_info in ip_list:
-                ip = ip_info["ip"]
-                interface = ip_info["interface"]
-                subnet = f"{ip}/24"  # Sous-réseau à scanner
-                print(f"Lancement du scan sur le sous-réseau {subnet} (interface: {interface})...")
-                scanner.scan(hosts=subnet, arguments="-F")  # Scan rapide (-F) du sous-réseau
-                for host in scanner.all_hosts():
-                    hostname = scanner[host].hostname() or "Nom de machine inconnu"
-                    host_info = {"host": host, "hostname": hostname, "state": scanner[host].state(), "ports": []}
-                    if 'tcp' in scanner[host]:
-                        for port in sorted(scanner[host]['tcp']):
-                            if scanner[host]['tcp'][port]['state'] == 'open':
-                                service = scanner[host]['tcp'][port]['name']
-                                host_info["ports"].append({"port": port, "service": service})
-                    scan_results.append(host_info)
+            scanner.scan(hosts=subnet, arguments="-F")  # Scan rapide (-F)
+            for host in scanner.all_hosts():
+                hostname = scanner[host].hostname() or "Nom de machine inconnu"
+                state = scanner[host].state()
+                open_ports = []
+
+                if 'tcp' in scanner[host]:
+                    for port in sorted(scanner[host]['tcp']):
+                        if scanner[host]['tcp'][port]['state'] == 'open':
+                            service = scanner[host]['tcp'][port]['name']
+                            open_ports.append(f"{port}/{service}")
+
+                results.append((hostname, host, ", ".join(open_ports)))
         except Exception as e:
-            scan_results.append({"error": f"Erreur lors du scan : {e}"})
-    
-        return scan_results
-    
+            results.append((f"Erreur : {str(e)}", "N/A", "N/A"))
+
+        return results
+
     @staticmethod
     def export_to_json(data, filename):
         """
@@ -105,48 +99,3 @@ class Backend:
             print(f"Les résultats ont été exportés dans le fichier : {file_path}")
         except Exception as e:
             print(f"Erreur lors de l'exportation JSON : {e}")
-    
-    @staticmethod
-    def ensure_file_creation(filename):
-        """
-        Assure la création du fichier même si les données sont vides.
-        """
-        try:
-            script_dir = os.path.dirname(os.path.abspath(__file__))
-            file_path = os.path.join(script_dir, filename)
-            with open(file_path, "w", encoding="utf-8") as json_file:
-                json.dump({}, json_file, ensure_ascii=False, indent=4)
-            print(f"Fichier vide créé : {file_path}")
-        except Exception as e:
-            print(f"Erreur lors de la création du fichier vide : {e}")
-    
-    if __name__ == "__main__":
-    print(f"Scanner Nmap - Version {NetworkScanner.VERSION}")
-    
-    # Informations de la machine
-    machine_info = NetworkScanner.get_info_machine()
-    print("\nInformations de la machine :")
-    print(machine_info)
-    
-    # Test de latence Google (une seule fois)
-    print("\nTest de latence vers Google...")
-    google_latency = NetworkScanner.test_google_latency()
-    if google_latency:
-        print(f"Latence vers Google : {google_latency} ms")
-    else:
-        print("Impossible de mesurer la latence vers Google.")
-    
-    # Export des informations de la machine et de la latence Google
-    main_export_data = {
-        "machine_info": machine_info,
-        "google_latency": google_latency,
-    }
-    NetworkScanner.export_to_json(main_export_data, "main_results.json")
-    
-    # Scan réseau sur toutes les interfaces
-    print("\nLancement d'un scan réseau sur toutes les interfaces...")
-    network_scan_results = NetworkScanner.run_nmap_scan_on_all_interfaces()
-    if network_scan_results:
-        NetworkScanner.export_to_json(network_scan_results, "network_scan_results.json")
-    else:
-        NetworkScanner.ensure_file_creation("network_scan_results.json")
