@@ -47,7 +47,7 @@ class Dashboard:
         bouton_frame.pack(pady=20)
 
         scan_button = tk.Button(
-            bouton_frame, text="Lancer un scan", font=("Helvetica", 12), command=self.start_scan_thread)
+            bouton_frame, text="Lancer un scan", font=("Helvetica", 12), command=self.display_data)
         scan_button.grid(row=0, column=0, padx=10, pady=5)
 
     def add_scan_frame(self):
@@ -57,36 +57,30 @@ class Dashboard:
         scan_title = tk.Label(scan_frame, text="Résultats du dernier scan réseau", font=("Helvetica", 14, "bold"))
         scan_title.pack(pady=10)
 
-        columns = ("Host", "Hostname", "State", "Ports")
+        columns = ("Host", "Hostname", "Ports")  # Suppression de la colonne "State"
         self.scan_table = ttk.Treeview(scan_frame, columns=columns, show="headings", height=10)
         self.scan_table.pack(fill=tk.BOTH, expand=True)
 
         for col in columns:
             self.scan_table.heading(col, text=col)
 
-    def start_scan_thread(self):
-        """
-        Lance le scan réseau dans un thread séparé.
-        """
-        self.scan_table.delete(*self.scan_table.get_children())  # Efface les données précédentes
-        self.devices_label.config(text="Machines connectées : En cours...")  # Mise à jour du label
-        threading.Thread(target=self.display_data, daemon=True).start()
-
     def display_data(self):
         """
         Exécute le scan réseau et met à jour le tableau machine par machine.
         """
-        scan_results = Backend.lancer_scan()
+        self.scan_table.delete(*self.scan_table.get_children())  # Efface les données précédentes
+        self.devices_label.config(text="Machines connectées : En cours...")  # Mise à jour du label
 
+        scan_results = Backend.lancer_scan()
         machine_count = 0
+
         for result in scan_results:
             host = result["host"]
             hostname = result["hostname"]
-            state = result["state"]
             ports = ", ".join([f"{p['port']}/{p['service']}" for p in result["ports"]])
 
             # Ajout de la machine dans le tableau
-            self.scan_table.insert("", tk.END, values=(host, hostname, state, ports))
+            self.scan_table.insert("", tk.END, values=(host, hostname, ports))
 
             # Mise à jour du compteur de machines
             machine_count += 1
@@ -94,9 +88,3 @@ class Dashboard:
 
         # Fin du scan
         self.devices_label.config(text=f"Scan terminé : {machine_count} machines détectées.")
-
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = Dashboard(root)
-    root.mainloop()
