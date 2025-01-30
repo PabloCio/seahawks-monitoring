@@ -53,10 +53,21 @@ class Dashboard:
         bouton_frame = tk.Frame(self.main_window)
         bouton_frame.pack(pady=20)
 
+        # Bouton pour lancer actualisé
+        scan_button = tk.Button(bouton_frame, text="Actualiser l'interface", font=("Helvetica", 12), command=Backend.get_info_machine)
+        scan_button.grid(row=0, column=0, padx=10, pady=5)
+
         # Bouton pour lancer un scan
-        scan_button = tk.Button(
-        bouton_frame, text="Lancer un scan", font=("Helvetica", 12), command=self.display_data)
+        scan_button = tk.Button(bouton_frame, text="Lancer un scan", font=("Helvetica", 12), command=self.display_data)
         scan_button.grid(row=0, column=1, padx=10, pady=5)
+
+        # Bouton de mise à jour
+        scan_button = tk.Button(bouton_frame, text="Vérification de la version", font=("Helvetica", 12), command=self.display_data)
+        scan_button.grid(row=0, column=2, padx=10, pady=5)
+
+        # Ajoute le titre principal "Seahawks Monitoring"
+        title_update = tk.Label(bouton_frame, text="A jour", font=("Helvetica", 10, "bold"))
+        title_update.grid(row=0, column=3, padx=10, pady=5)
 
     def display_data(self): #afficher les resultat du scan
         data = Backend.lancer_scan() #Appelle les données
