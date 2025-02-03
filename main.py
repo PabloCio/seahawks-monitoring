@@ -1,14 +1,12 @@
 import tkinter as tk
 from front import Dashboard # Import classe Dashboard
-from modules import # Import les fonctions
+
 
 
 # Point d'entrée principal
 if __name__ == "__main__":
     main_windows = tk.Tk()  # Crée la fenêtre principale
 
-    # Initialisation des fonctionnalités back-end
-    backend = Backend()
 
     # Initialise le dashboard
     app = Dashboard(main_windows)
