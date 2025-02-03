@@ -1,9 +1,9 @@
 # modules/__init__.py
 
-from .scan import scan_reseau
-from .wan import test_latence
-from .db import Database
-from .install import setup
-from .dashboard import Dashboard
+from .scan import scan_network
+from .wan import latence_wan
+from .db import export_db
+from .install import install_and_import
+from .dashboard import get_info_machine
 
 __all__ = ["scan_reseau", "test_latence", "Database", "setup", "Dashboard"]
