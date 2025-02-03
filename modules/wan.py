@@ -1,5 +1,5 @@
 import subprocess
-
+#pour windows dans result la lettre doit etre n et dans linux elle doit etre c
 def test_latence():
     try:
         result = subprocess.run(["ping", "-n", "1", "8.8.8.8"], capture_output=True, text=True)
