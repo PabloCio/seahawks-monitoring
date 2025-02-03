@@ -7,7 +7,6 @@ from front import Dashboard # Import classe Dashboard
 if __name__ == "__main__":
     main_windows = tk.Tk()  # Crée la fenêtre principale
 
-
     # Initialise le dashboard
     app = Dashboard(main_windows)
 
