@@ -1,7 +1,7 @@
-# Fonction du dashbord
+# Fonction du dashbord INUTILE
 import socket
 
-VERSION = 1.0
+#VERSION = 1.0
 
 def get_info_machine():
         # Retourne les informations de la machine locale : hostname, IP locale et version de l'application.
