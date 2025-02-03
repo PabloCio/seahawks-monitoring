@@ -2,7 +2,7 @@ import tkinter as tk
 import threading
 
 from tkinter import ttk
-from modules import get_info_machine ,latence_wan
+from modules import get_info_machine
 
 info_machine = get_info_machine()
 
@@ -12,6 +12,7 @@ class Dashboard:
         self.main_window.title(f"Seahawks Monitoring | Harvester - {info_machine["version"]}") # Titre de la fenêtre
         self.main_window.geometry("700x600") # Définit la taille de la fenêtre en pixels
 
+        # Configure les widgets
         self.setup_ui()
 
         # Affiche les dernière données de scan
@@ -32,7 +33,7 @@ class Dashboard:
     def add_top_frame(self):
         # Ajoute la section supérieure
         top_frame = tk.Frame(self.main_window)
-        top_frame.pack(pady=20)
+        top_frame.pack(pady=20) # Ajoute un espace vertical autour des cadres
 
         # Affiche le Hsotname
         hostname_label = tk.Label(top_frame, text=f"Hostname : {info_machine['hostname']}", font=("Helvetica", 12))
@@ -44,7 +45,7 @@ class Dashboard:
         ip_label = tk.Label(top_frame, text=f"Adresse IP : {info_machine['local_ip']}", font=("Helvetica", 12))
         ip_label.grid(row=1, column=0, padx=10, pady=5)
         # Affiche la latence WAN
-        self.latency_label = tk.Label(top_frame, text="Latence WAN : {latence_wan}", font=("Helvetica", 12))
+        self.latency_label = tk.Label(top_frame, text="Latence WAN : ", font=("Helvetica", 12))
         self.latency_label.grid(row=1, column=1, padx=10, pady=5)
 
     def add_bouton_frame(self):
