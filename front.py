@@ -12,7 +12,6 @@ class Dashboard:
         self.main_window.title(f"Seahawks Monitoring | Harvester - {info_machine["version"]}") # Titre de la fenêtre
         self.main_window.geometry("700x600") # Définit la taille de la fenêtre en pixels
 
-        # Configure les widgets
         self.setup_ui()
 
         # Affiche les dernière données de scan
@@ -33,7 +32,7 @@ class Dashboard:
     def add_top_frame(self):
         # Ajoute la section supérieure
         top_frame = tk.Frame(self.main_window)
-        top_frame.pack(pady=20) # Ajoute un espace vertical autour des cadres
+        top_frame.pack(pady=20)
 
         # Affiche le Hsotname
         hostname_label = tk.Label(top_frame, text=f"Hostname : {info_machine['hostname']}", font=("Helvetica", 12))
