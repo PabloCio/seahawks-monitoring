@@ -2,7 +2,7 @@ import tkinter as tk
 import threading
 
 from tkinter import ttk
-from modules import get_info_machine
+from modules import get_info_machine, test_latence
 
 info_machine = get_info_machine()
 
@@ -45,7 +45,7 @@ class Dashboard:
         ip_label = tk.Label(top_frame, text=f"Adresse IP : {info_machine['local_ip']}", font=("Helvetica", 12))
         ip_label.grid(row=1, column=0, padx=10, pady=5)
         # Affiche la latence WAN
-        self.latency_label = tk.Label(top_frame, text="Latence WAN : ", font=("Helvetica", 12))
+        self.latency_label = tk.Label(top_frame, text=f"Latence WAN : {test_latence()}", font=("Helvetica", 12))
         self.latency_label.grid(row=1, column=1, padx=10, pady=5)
 
     def add_bouton_frame(self):
@@ -92,7 +92,7 @@ class Dashboard:
         self.scan_table.delete(*self.scan_table.get_children())  # Efface les données précédentes
         self.devices_label.config(text="Machines connectées : En cours...")  # Mise à jour du label
 
-        scan_results = Backend.lancer_scan()
+        scan_results = 1
         machine_count = 0
 
         for result in scan_results:
