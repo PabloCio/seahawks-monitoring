@@ -1,6 +1,7 @@
 
 #Fonction de latance
 import subprocess
+import socket
 #pour windows dans result la lettre doit etre n et dans linux elle doit etre c
 def get_wan_latency():
     try:
@@ -15,3 +16,18 @@ def get_wan_latency():
 
 latency = get_wan_latency()
 print(f"Latence vers Google : {latency} ms" if latency else "Impossible de mesurer la latence.")
+
+
+
+def get_hostname():
+    """
+    Retourne le nom d'hôte (hostname) de la machine locale.
+    """
+    try:
+        return socket.gethostname()
+    except Exception as e:
+        print(f"❌ Erreur lors de la récupération du hostname : {e}")
+        return None
+
+# 🔥 Exemple d'utilisation :
+print(get_hostname())  # Affiche le hostname de la machine
