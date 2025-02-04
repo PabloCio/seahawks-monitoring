@@ -1,5 +1,6 @@
 import tkinter as tk
 from ui.ui_info import InfoFrame
+from ui.ui_controls import ControlsFrame
 
 class MainApp(tk.Tk):
     # Fenetere globale avec Tkinter
@@ -17,6 +18,10 @@ class MainApp(tk.Tk):
         # Ajout de la zone Info
         self.info_frame = InfoFrame(self)
         self.info_frame.pack()
+
+        # Ajout de la Controle
+        self.controls_frame = ControlsFrame(self)
+        self.controls_frame.pack()
 
 # Pour tester directement cette fenêtre en lançant ui_main.py
 if __name__ == "__main__":
