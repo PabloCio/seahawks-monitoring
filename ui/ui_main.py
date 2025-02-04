@@ -1,4 +1,5 @@
 import tkinter as tk
+from ui.ui_info import InfoFrame
 
 class MainApp(tk.Tk):
     # Fenetere globale avec Tkinter
@@ -9,11 +10,13 @@ class MainApp(tk.Tk):
         self.configure(bg="#f0f0f0") #Définie la couleur du fond
         self.resizable(width=False, height=False) #Interdit le redimensionnement de la fenêtre
 
-        # Ajout des widgets
+        # Titre de MainApp
         titre = tk.Label(self, text="Seahawks Harvester", bg="#f0f0f0", font=("Arial", 16, "bold"))
         titre.pack(pady=20, padx=20)
 
-
+        # Ajout de la zone Info
+        self.info_frame = InfoFrame(self)
+        self.info_frame.pack()
 
 # Pour tester directement cette fenêtre en lançant ui_main.py
 if __name__ == "__main__":
