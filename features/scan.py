@@ -52,7 +52,7 @@ def scan_network(network_range):
     :return: Liste des machines trouvées avec IP et nom d'hôte
     """
     scanner = nmap.PortScanner()
-    print(f"🔍 Scan des machines connectées sur {network_range}...")
+    print(f" Scan des machines connectées sur {network_range}...")
 
     try:
         scanner.scan(hosts=network_range, arguments="-sn")  # Scan sans ports (-sn)
@@ -68,7 +68,7 @@ def scan_network(network_range):
         print(f" Erreur lors du scan : {e}")
         return []
 
-# 🔥 Exemple d'utilisation :
+#  Exemple d'utilisation :
 #plage = "192.168.1.0/24"  # Modifie selon ton réseau
 #resultats = scan_network(plage)
 
