@@ -31,7 +31,7 @@ def get_hostname():
         print(f" Erreur lors de la récupération du hostname : {e}")
         return None
 
-# 🔥 Exemple d'utilisation :
+#  Exemple d'utilisation :
 print(get_hostname())  # Affiche le hostname de la machine
 
 
@@ -53,7 +53,7 @@ def get_local_ip():
         print(f" Erreur lors de la récupération de l'IP locale : {e}")
         return None
 
-# 🔥 Exemple d'utilisation :
+# Exemple d'utilisation :
 # print(get_local_ip())  # Affiche l'adresse IP locale
 
 def get_connected_devices_count(network_range):
@@ -66,7 +66,7 @@ def get_connected_devices_count(network_range):
     devices = scan_network(network_range)  # Appelle la fonction scan_network
     return len(devices)  # Retourne le nombre total de machines trouvées
 
-# 🔥 Exemple d'utilisation :
+#  Exemple d'utilisation :
 network_range = "192.168.1.0/24"  # Modifie selon ton réseau
 print(f"Appareils connectés : {get_connected_devices_count(network_range)}")
 
