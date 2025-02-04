@@ -1,6 +1,6 @@
 import nmap
 
-def scan_network(network_range, ports="1-1000"):
+def get_open_ports(network_range, ports="1-1000"):
     """
     Effectue un scan réseau sur une plage d'IP donnée.
     
@@ -38,13 +38,13 @@ def scan_network(network_range, ports="1-1000"):
 
 #  Exemple d'utilisation :
 #plage = "192.168.1.0/24"  # Modifie selon ton réseau
-#resultats_scan = scan_network(plage)
+#resultats_scan = get_open_portsk(plage)
 
 # Affichage des résultats
 #for machine in resultats_scan:
     #print(f"{machine['ip']} ({machine['nom_hote']}) - Ports ouverts : {machine['ports_ouverts']}")
 
-def get_open_ports(network_range):
+def scan_network(network_range):
     """
     Détecte les machines connectées sur une plage d'IP sans scanner les ports.
     
@@ -70,7 +70,7 @@ def get_open_ports(network_range):
 
 # 🔥 Exemple d'utilisation :
 #plage = "192.168.1.0/24"  # Modifie selon ton réseau
-#resultats = get_open_ports(plage)
+#resultats = scan_network(plage)
 
  #Affichage des résultats
 #for machine in resultats:
