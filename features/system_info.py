@@ -26,8 +26,31 @@ def get_hostname():
     try:
         return socket.gethostname()
     except Exception as e:
-        print(f"❌ Erreur lors de la récupération du hostname : {e}")
+        print(f" Erreur lors de la récupération du hostname : {e}")
         return None
 
 # 🔥 Exemple d'utilisation :
 print(get_hostname())  # Affiche le hostname de la machine
+
+
+
+
+
+def get_local_ip():
+    """
+    Retourne l'adresse IP locale de la machine.
+    """
+    try:
+        # Crée un socket temporaire pour obtenir l'IP sans nécessiter de connexion réelle
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))  # Se connecte à Google DNS (mais sans envoyer de données)
+        ip_locale = s.getsockname()[0]  # Récupère l'adresse IP locale
+        s.close()
+        return ip_locale
+    except Exception as e:
+        print(f" Erreur lors de la récupération de l'IP locale : {e}")
+        return None
+
+# 🔥 Exemple d'utilisation :
+# print(get_local_ip())  # Affiche l'adresse IP locale
+
