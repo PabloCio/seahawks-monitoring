@@ -1,15 +1,6 @@
 import tkinter as tk
-import socket
 
-def get_hostname():
-    return socket.gethostname()
-
-def get_local_ip():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))  # Se connecte au DNS de Google pour déterminer l'IP locale
-    ip_locale = s.getsockname()[0]
-    s.close()
-    return ip_locale
+from features.system_info import get_hostname, get_local_ip
 
 class InfoFrame(tk.Frame):
     def __init__(self, parent):

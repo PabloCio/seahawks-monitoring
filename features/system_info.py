@@ -2,7 +2,7 @@
 #Fonction de latance
 import subprocess
 import socket
-from scan import scan_network
+from features.scan import scan_network
 
 #pour windows dans result la lettre doit etre n et dans linux elle doit etre c
 def get_wan_latency():
