@@ -29,13 +29,6 @@ class ResultsFrame(tk.Frame):
         self.tree.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
 
-        # Ajout de quelques résultats fictifs
-        self.populate_results([
-            {"hostname": "PC-1", "ip": "192.168.1.10", "ports": [22, 80]},
-            {"hostname": "PC-2", "ip": "192.168.1.12", "ports": [3389]},
-            {"hostname": "PC-3", "ip": "192.168.1.15", "ports": []},  # Aucun port ouvert
-        ])
-
     def populate_results(self, data):
         """Ajoute des résultats dans le tableau."""
         self.tree.delete(*self.tree.get_children())  # Efface les anciennes entrées

@@ -16,17 +16,17 @@ class MainApp(tk.Tk):
         titre = tk.Label(self, text="Seahawks Harvester", bg="#f0f0f0", font=("Arial", 16, "bold"))
         titre.pack(pady=20, padx=20)
 
-        # Ajout de la zone Info
+        # Zone Info
         self.info_frame = InfoFrame(self)
         self.info_frame.pack()
 
-        # Ajout de la zone Controle
-        self.controls_frame = ControlsFrame(self)
-        self.controls_frame.pack()
-
-         # Ajout de la zone Résultat
+        # Zone Résultat
         self.results_frame = ResultsFrame(self)
         self.results_frame.pack()
+
+        # Zone Controle
+        self.controls_frame = ControlsFrame(self, self.results_frame)
+        self.controls_frame.pack()
 
 # Pour tester directement cette fenêtre en lançant ui_main.py
 if __name__ == "__main__":
