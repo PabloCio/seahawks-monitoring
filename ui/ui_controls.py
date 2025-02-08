@@ -1,5 +1,7 @@
 import tkinter as tk
 from features.scan import scan_network
+from features.json import save_scan_results
+
 
 class ControlsFrame(tk.Frame):
     # Zone contenant les boutons et la saisie de l'IP
@@ -32,4 +34,7 @@ class ControlsFrame(tk.Frame):
 
         # Mettre à jour le tableau
         self.results_frame.populate_results(results)
+
+        # Sauvegarder les résultats du scan
+        save_scan_results(results)
         

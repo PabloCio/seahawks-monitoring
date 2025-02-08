@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk  # Tkinter Treeview
+from features.json import save_scan_results, load_scan_results
 
 #Zone affichant les résultats du scan sous forme de tableau
 
@@ -29,6 +30,10 @@ class ResultsFrame(tk.Frame):
         self.tree.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
 
+        # Chargement des résultats précédents
+        previous_results = load_scan_results()
+        self.populate_results(previous_results)
+
     def populate_results(self, data):
         """Ajoute des résultats dans le tableau."""
         self.tree.delete(*self.tree.get_children())  # Efface les anciennes entrées
@@ -39,3 +44,5 @@ class ResultsFrame(tk.Frame):
             open_ports = ", ".join(map(str, machine["ports"])) if machine["ports"] else "Aucun"
 
             self.tree.insert("", "end", values=(hostname, ip, open_ports))
+        
+        save_scan_results(data)
