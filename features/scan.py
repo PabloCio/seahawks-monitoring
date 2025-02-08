@@ -38,7 +38,7 @@ def get_open_ports(network_range, ports="1-1000"):
 
 #  Exemple d'utilisation :
 #plage = "192.168.1.0/24"  # Modifie selon ton réseau
-#resultats_scan = get_open_portsk(plage)
+#resultats_scan = get_open_ports(plage)
 
 # Affichage des résultats
 #for machine in resultats_scan:

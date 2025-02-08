@@ -35,14 +35,16 @@ class ResultsFrame(tk.Frame):
         self.populate_results(previous_results)
 
     def populate_results(self, data):
-        """Ajoute des résultats dans le tableau."""
+        """Ajoute des résultats dans le tableau et les sauvegarde."""
         self.tree.delete(*self.tree.get_children())  # Efface les anciennes entrées
 
         for machine in data:
-            hostname = machine["hostname"]
+            hostname = machine["nom_hote"]  # Indique que hostname doit être le "nom_hote" ou "Inconnu"
             ip = machine["ip"]
-            open_ports = ", ".join(map(str, machine["ports"])) if machine["ports"] else "Aucun"
+            open_ports = machine.get("ports_ouverts", [])
+            open_ports_str = ", ".join(map(str, open_ports)) if open_ports else "Aucun"
 
-            self.tree.insert("", "end", values=(hostname, ip, open_ports))
-        
+            self.tree.insert("", "end", values=(hostname, ip, open_ports_str))
+
+        # Sauvegarde automatique des résultats après mise à jour
         save_scan_results(data)

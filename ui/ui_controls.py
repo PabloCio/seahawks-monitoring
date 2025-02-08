@@ -1,5 +1,5 @@
 import tkinter as tk
-from features.scan import scan_network
+from features.scan import get_open_ports
 from features.json import save_scan_results
 
 
@@ -30,7 +30,7 @@ class ControlsFrame(tk.Frame):
             return
         
         # Lancer le scan
-        results = scan_network(network_range)
+        results = get_open_ports(network_range)
 
         # Mettre à jour le tableau
         self.results_frame.populate_results(results)
