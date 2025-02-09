@@ -20,10 +20,7 @@ class InfoFrame(tk.Frame):
         self.local_ip_label = tk.Label(self, text=f"Adresse IP : {local_ip}", bg="grey", fg="black", font=("Arial", 12))
         self.local_ip_label.pack()
 
-
-        self.latency_label = get_wan_latency()
+        self.latency_label = tk.Label(self, text=f"Latence : {latency}", bg="grey", fg="black", font=("Arial", 12))
         self.latency_label.pack()
-        print(get_wan_latency)
-        print(get_wan_latency())
-        print(latency)
-    
+
+      
