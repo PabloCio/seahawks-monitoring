@@ -32,7 +32,7 @@ def get_hostname():
         return None
 
 #  Exemple d'utilisation :
-print(get_hostname())  # Affiche le hostname de la machine
+#print(get_hostname())  # Affiche le hostname de la machine
 
 
 
@@ -67,6 +67,6 @@ def get_connected_devices_count(network_range):
     return len(devices)  # Retourne le nombre total de machines trouvées
 
 #  Exemple d'utilisation :
-network_range = "192.168.1.0/24"  # Modifie selon ton réseau
-print(f"Appareils connectés : {get_connected_devices_count(network_range)}")
+#network_range = "192.168.1.0/24"  # Modifie selon ton réseau
+#print(f"Appareils connectés : {get_connected_devices_count(network_range)}")
 

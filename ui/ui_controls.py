@@ -1,6 +1,8 @@
 import tkinter as tk
 from features.scan import get_open_ports
 from features.json import save_scan_results
+from features.db_session import insert_scan_results
+
 
 
 class ControlsFrame(tk.Frame):
@@ -37,4 +39,7 @@ class ControlsFrame(tk.Frame):
 
         # Sauvegarder les résultats du scan
         save_scan_results(results)
+
+        # Enregistrer dans la base de données
+        insert_scan_results(results, franchise="Franchise 01")
         
