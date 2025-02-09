@@ -1,6 +1,7 @@
 import tkinter as tk
 
-from features.system_info import get_hostname, get_local_ip
+
+from features.system_info import get_hostname, get_local_ip, get_wan_latency
 
 class InfoFrame(tk.Frame):
     def __init__(self, parent):
@@ -10,6 +11,7 @@ class InfoFrame(tk.Frame):
         # Récuparation des infos système
         hostname = get_hostname()
         local_ip = get_local_ip()
+        latency = get_wan_latency()
 
         # Création des Labels
         self.hostname_label = tk.Label(self, text=f"Hostname : {hostname}", bg="grey", fg="black", font=("Arial", 12))
@@ -17,3 +19,11 @@ class InfoFrame(tk.Frame):
 
         self.local_ip_label = tk.Label(self, text=f"Adresse IP : {local_ip}", bg="grey", fg="black", font=("Arial", 12))
         self.local_ip_label.pack()
+
+
+        self.latency_label = get_wan_latency()
+        self.latency_label.pack()
+        print(get_wan_latency)
+        print(get_wan_latency())
+        print(latency)
+    
