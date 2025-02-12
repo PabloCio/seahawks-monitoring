@@ -2,6 +2,7 @@
 #Fonction de latance
 import subprocess
 import socket
+import netifaces
 from features.scan import scan_network
 
 #pour windows dans result la lettre doit etre n et dans linux elle doit etre c
@@ -52,6 +53,7 @@ def get_local_ip():
     except Exception as e:
         print(f" Erreur lors de la récupération de l'IP locale : {e}")
         return None
+    
 
 # Exemple d'utilisation :
 # print(get_local_ip())  # Affiche l'adresse IP locale
@@ -70,3 +72,36 @@ def get_connected_devices_count(network_range):
 #network_range = "192.168.1.0/24"  # Modifie selon ton réseau
 #print(f"Appareils connectés : {get_connected_devices_count(network_range)}")
 
+def get_netmask(ip_locale):
+    """ Récupère le masque réseau de l'interface correspondant à l'IP locale. """
+    for interface in netifaces.interfaces():
+        addrs = netifaces.ifaddresses(interface)
+        if netifaces.AF_INET in addrs:
+            for addr in addrs[netifaces.AF_INET]:
+                if addr['addr'] == ip_locale:
+                    return addr['netmask']
+    return None  # Si aucune correspondance trouvée
+
+def mask_to_cidr(netmask):
+    """ Convertit un masque de sous-réseau (ex. 255.255.255.0) en notation CIDR. """
+    return sum(bin(int(x)).count('1') for x in netmask.split('.'))
+
+def get_cidr():
+    """ Retourne uniquement le CIDR du réseau actuel (ex. 24 pour /24). """
+    try:
+        ip_locale = get_local_ip()
+        netmask = get_netmask(ip_locale)
+        return mask_to_cidr(netmask)
+
+    except Exception as e:
+        return print(f"Erreur lors de la récupération du CIDR : {e}")
+
+def get_plage():
+    # Retourne l'adresse IP locale avec le CIDR sous forme '192.168.1.50/24'. """
+    ip = get_local_ip()
+    cidr = get_cidr()
+
+    if ip and cidr is not None:
+        return f"{ip}/{cidr}"
+    else:
+        return None

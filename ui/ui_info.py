@@ -1,7 +1,7 @@
 import tkinter as tk
 
 
-from features.system_info import get_hostname, get_local_ip, get_wan_latency, get_connected_devices_count
+from features.system_info import get_hostname, get_local_ip, get_wan_latency, get_connected_devices_count, get_cidr
 
 class InfoFrame(tk.Frame):
     def __init__(self, parent):
@@ -12,7 +12,8 @@ class InfoFrame(tk.Frame):
         hostname = get_hostname()
         local_ip = get_local_ip()
         latency = get_wan_latency()
-        count = get_connected_devices_count(f"{local_ip}/24")
+        cdir = get_cidr()
+        count = get_connected_devices_count(f"{local_ip}/{cdir}")
 
         # Création des Labels
         self.hostname_label = tk.Label(self, text=f"Hostname : {hostname}", bg="grey", fg="black", font=("Arial", 12))

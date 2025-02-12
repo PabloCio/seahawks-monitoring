@@ -1,7 +1,7 @@
 [
     {
         "ip": "192.168.1.1",
-        "nom_hote": "Inconnu",
+        "nom_hote": "meteor.arcadyan.com",
         "ports_ouverts": [
             53,
             80,
@@ -10,7 +10,7 @@
     },
     {
         "ip": "192.168.1.101",
-        "nom_hote": "xiaomi_vacuum.lan",
+        "nom_hote": "Inconnu",
         "ports_ouverts": []
     },
     {
@@ -34,7 +34,7 @@
     },
     {
         "ip": "192.168.1.136",
-        "nom_hote": "Inconnu",
+        "nom_hote": "SonosZP.lan",
         "ports_ouverts": []
     },
     {
@@ -51,7 +51,7 @@
     },
     {
         "ip": "192.168.1.149",
-        "nom_hote": "Inconnu",
+        "nom_hote": "XPS.lan",
         "ports_ouverts": [
             53,
             135,
@@ -65,8 +65,11 @@
         "ip": "192.168.1.150",
         "nom_hote": "Inconnu",
         "ports_ouverts": [
-            22,
-            111
+            53,
+            135,
+            445,
+            902,
+            912
         ]
     }
 ]

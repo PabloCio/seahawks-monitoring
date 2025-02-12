@@ -2,7 +2,7 @@ import tkinter as tk
 from features.scan import get_open_ports
 from features.json import save_scan_results
 from features.db_session import insert_scan_results
-
+from features.system_info import get_plage
 
 
 class ControlsFrame(tk.Frame):
@@ -11,14 +11,19 @@ class ControlsFrame(tk.Frame):
         super().__init__(parent, bg="grey", height=100)
         self.pack(fill="x", padx=5, pady=5)
 
+        # Récuparation des infos système
+        plage = get_plage()
+
         # Stockage du tableau des résultats pour l'update
         self.results_frame = results_frame 
 
         # Variable Tkinter pour stocker l’entrée utilisateur
         self.ip_entry_var = tk.StringVar()
+
         # Champ de saisie pour la plage IP
         self.ip_entry = tk.Entry(self, textvariable=self.ip_entry_var, width=20)
         self.ip_entry.pack(pady=5)
+        self.ip_entry.insert(0, plage)
 
         # Bouton pour lancer le scan
         self.scan_button = tk.Button(self, text="Scan", command=self.start_scan)
