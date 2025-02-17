@@ -2,7 +2,7 @@ import tkinter as tk
 from features.scan import get_open_ports
 from features.json import save_scan_results
 from features.db_session import insert_scan_results
-from features.system_info import get_plage
+from features.system_info import get_plage 
 
 
 class ControlsFrame(tk.Frame):
@@ -10,6 +10,7 @@ class ControlsFrame(tk.Frame):
     def __init__(self, parent, results_frame):
         super().__init__(parent, bg="grey", height=100)
         self.pack(fill="x", padx=5, pady=5)
+
 
         # Récuparation des infos système
         plage = get_plage()
@@ -46,5 +47,4 @@ class ControlsFrame(tk.Frame):
         save_scan_results(results)
 
         # Enregistrer dans la base de données
-        insert_scan_results(results, franchise="Franchise 01")
-        
+        #insert_scan_results(results, franchise="Franchise 01")
