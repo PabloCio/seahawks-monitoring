@@ -2,6 +2,7 @@ import sys
 sys.dont_write_bytecode = True
 
 import mariadb
+import json
 
 def db_connect():
     try:
@@ -13,7 +14,7 @@ def db_connect():
             user="root",
             password="root",
             host="192.0.2.17",
-            database="harverster01_db"
+            database="franchise_1"
         )
         return init_connexion
 
@@ -31,7 +32,7 @@ def db_disconnect(connexion): #Ferme la connexion à la base de données si ouve
         print(f"Erreur de déconnexion de la base de données MariaDB: {e}")
 
 
-def insert_scan_results(results, franchise="default_franchise"):
+def insert_scan_results(results, harvester_ID):
     # envoie les resultats du scan vers la bdd
     connexion = db_connect()
     if not connexion:
@@ -40,38 +41,17 @@ def insert_scan_results(results, franchise="default_franchise"):
     
     try:
         cursor = connexion.cursor()
-
-        # Insère le scan et récupérer son ID
-        query_scan = "INSERT INTO Scan (franchise) VALUES (%s)"
-        cursor.execute(query_scan, (franchise,))
-        connexion.commit()
-        id_scan = cursor.lastrowid  # Récupère l'ID du scan inséré
-
-        # Insère les machines détectées
-        query_machine = "INSERT INTO Machine (id_scan, hostname, ip_adress) VALUES (%s, %s, %s)"
         
-        machine_ids = {}  # Dictionnaire pour stocker l'ID de chaque machine
-        for machine in results:
-            hostname = machine.get("nom_hote")
-            ip_adress = machine.get("ip")
 
-            cursor.execute(query_machine, (id_scan, hostname, ip_adress))
-            connexion.commit()
-            id_machine = cursor.lastrowid  # Récupère l'ID de la machine insérée
-            machine_ids[ip_adress] = id_machine  # Associe l'IP à son ID machine
+        # Convertir le dictionnaire en chaîne JSON
+        scan_json_str = json.dumps(results)
 
-        # Insérer les ports ouverts pour chaque machine
-        query_port = "INSERT INTO Port (id_machine, port_number) VALUES (%s, %s)"
-        
-        for machine in results:
-            ip = machine["ip"]
-            id_machine = machine_ids.get(ip)  # Récupère l'ID de la machine correspondante
+        # Insère le rapport dans la colone Scan_Rapport
+        query_scan = "INSERT INTO NetworkScan (Harvester_ID, Scan_Rapport) VALUES (%s, %s)"
+        cursor.execute(query_scan, (harvester_ID, scan_json_str))
+        connexion.commit() # Valide l'insertion
 
-            for port in machine.get("ports_ouverts", []):
-                cursor.execute(query_port, (id_machine, port))
-        
-        connexion.commit()  # Enregistre toutes les modifications
-        print(f"Scan enregistré avec id_scan={id_scan}, {len(results)} machines et leurs ports.")
+        print(f"Rapport de scan inséré avec succès sous Scan_ID={cursor.lastrowid}")
 
     except mariadb.Error as e:
         print(f"Erreur lors de l'insertion des résultats : {e}")

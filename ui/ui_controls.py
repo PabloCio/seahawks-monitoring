@@ -47,4 +47,4 @@ class ControlsFrame(tk.Frame):
         save_scan_results(results)
 
         # Enregistrer dans la base de données
-        #insert_scan_results(results, franchise="Franchise 01")
+        insert_scan_results(results, harvester_ID = 1) #harvester_ID défini dans le python
