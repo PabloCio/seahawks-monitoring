@@ -3,25 +3,26 @@ sys.dont_write_bytecode = True
 
 import mariadb
 import json
+import os
+
+from dotenv import load_dotenv
+from pathlib import Path
 
 def db_connect():
     try:
         # Initialise la connexion à un SGBD MariaDB
-        # Avec la configuration suivante
-        # Seule la connexion au SGBD se fera
-        # Il faudra spécifier la BDD dans une requête
         init_connexion = mariadb.connect(
-            user="root",
-            password="root",
-            host="192.0.2.17",
-            database="franchise_1"
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            host=os.getenv("DB_HOST"),
+            database=os.getenv("DB_NAME")
         )
         return init_connexion
 
     # Si la connexion échoue pour X raison
     except mariadb.Error as e:
         # Un message d'erreur sera afficher dans le terminal
-        print(error_message = "Erreur de connexion à la base de données : {e}")
+        print(f"Erreur de connexion à la base de données : {e}")
 
 def db_disconnect(connexion): #Ferme la connexion à la base de données si ouverte
     try:
@@ -32,8 +33,16 @@ def db_disconnect(connexion): #Ferme la connexion à la base de données si ouve
         print(f"Erreur de déconnexion de la base de données MariaDB: {e}")
 
 
-def insert_scan_results(results, harvester_ID):
-    # envoie les resultats du scan vers la bdd
+def insert_scan_results(results, harvester_ID=None): # envoie les resultats du scan vers la bdd
+    # Charge .env 
+    dotenv_path = Path(__file__).resolve().parent.parent / ".env"
+    load_dotenv(dotenv_path=dotenv_path, override=True)
+    print(f"DB_HOST={os.getenv('DB_HOST')}, DB_USER={os.getenv('DB_USER')}, DB_PASSWORD={os.getenv('DB_PASSWORD')}, DB_NAME={os.getenv('DB_NAME')}")
+
+    # Si harvester_ID n'est pas défini, le charger depuis .env
+    if harvester_ID is None:
+        harvester_ID = int(os.getenv("HARVESTER_ID"))
+    
     connexion = db_connect()
     if not connexion:
         print("Impossible de se connecter à la base de données.")
@@ -41,7 +50,6 @@ def insert_scan_results(results, harvester_ID):
     
     try:
         cursor = connexion.cursor()
-        
 
         # Convertir le dictionnaire en chaîne JSON
         scan_json_str = json.dumps(results)
