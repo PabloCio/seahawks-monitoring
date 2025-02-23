@@ -8,7 +8,7 @@ from features.scan import scan_network
 #pour windows dans result la lettre doit etre n et dans linux elle doit etre c
 def get_wan_latency():
     try:
-        result = subprocess.run(["ping", "-n", "1", "8.8.8.8"], capture_output=True, text=True)
+        result = subprocess.run(["ping", "-c", "1", "8.8.8.8"], capture_output=True, text=True) # option -c pour Debian et -n pour Windows
         #print(result.stdout)  # Affiche la sortie du ping
         for line in result.stdout.split("\n"):
             if "temps" in line or "time=" in line:
