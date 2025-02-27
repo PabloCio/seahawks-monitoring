@@ -2,6 +2,7 @@ import tkinter as tk
 from ui.ui_info import InfoFrame
 from ui.ui_controls import ControlsFrame
 from ui.ui_results import ResultsFrame
+from features.db_session import update_harvester_dashboard
 
 class MainApp(tk.Tk):
     # Fenetere globale avec Tkinter
@@ -28,3 +29,15 @@ class MainApp(tk.Tk):
         self.controls_frame = ControlsFrame(self, self.results_frame)
         self.controls_frame.pack()
 
+        # Lancement de la mise à jour du dashboard au démarrage
+        print("Lancement de refresh_harvester_dashboard au démarrage")
+        self.refresh_harvester_dashboard()
+
+    def refresh_harvester_dashboard(self):
+        print(" Exécution de refresh harvester dashboard")
+        """Mise à jour périodique du statut du Harvester dans la base de données."""
+        update_harvester_dashboard()
+        self.after(300000, self.refresh_harvester_dashboard)  # 300000 ms = 5 minutes
+
+
+    
