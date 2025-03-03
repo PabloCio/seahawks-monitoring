@@ -1,77 +1,62 @@
 import nmap
+from features.system_info import get_network_range
 
-def get_open_ports(network_range, ports="1-1000"):
+def scan_network(network_range=None, fast=False):
     """
-    Effectue un scan réseau sur une plage d'IP donnée.
-    
-    :param network_range: La plage d'IP à scanner (ex: "192.168.1.0/24")
-    :param ports: Plage de ports à scanner (par défaut : tous les ports)
-    :return: Liste des machines trouvées avec IP, nom d'hôte et ports ouverts
+    Scanne les machines connectées au réseau.
+    :param network_range: Plage réseau sous forme '192.168.1.0/24'. Si None, utilise get_network_range().
+    :param fast: Si True, ne récupère que les IPs sans chercher les noms d'hôte.
+    :return: Tuple (Liste des machines trouvées, Nombre total de machines)
+    """
+    if network_range is None:
+        network_range = get_network_range()  # On récupère la plage réseau automatiquement
+
+    scanner = nmap.PortScanner()
+    scan_type = "Scan RAPIDE (uniquement comptage des machines)" if fast else "Scan COMPLET (détails et ports ouverts)"
+    print(f" {scan_type} sur {network_range}...")
+
+    try:
+        scanner.scan(hosts=network_range, arguments="-sn")
+
+        machines_trouvees = []
+        for host in scanner.all_hosts():
+            nom_hote = scanner[host].hostname() or "Inconnu" if not fast else "?"
+            machines_trouvees.append({"ip": host, "nom_hote": nom_hote})
+
+        return machines_trouvees, len(machines_trouvees)
+
+    except Exception as e:
+        print(f"Erreur lors du scan : {e}")
+        return [], 0
+
+def get_open_ports(ips, ports="1-1000"):
+    """
+    Effectue un scan des ports ouverts uniquement sur les machines identifiées.
+    :param ips: Liste d'IP des machines détectées.
+    :param ports: Plage de ports à scanner.
+    :return: Liste des machines avec leurs ports ouverts.
     """
     scanner = nmap.PortScanner()
-    print(f" Scan en cours sur {network_range}...")
-    
+    print(f"Scan des ports ouverts sur {len(ips)} machines...")
+
+    results = []
     try:
-        scanner.scan(hosts=network_range, arguments=f"-p {ports} -T4 -sS")
+        for ip in ips:
+            scanner.scan(hosts=ip, arguments=f"-p {ports} -T4 -sS")
 
-        resultats = []
-        for host in scanner.all_hosts():
-            nom_hote = scanner[host].hostname() or "Inconnu"
-            ports_ouverts = []
+            nom_hote = scanner[ip].hostname() or "Inconnu"
+            ports_ouverts = [
+                port for port, infos in scanner[ip].get("tcp", {}).items() if infos["state"] == "open"
+            ]
 
-            if "tcp" in scanner[host]:
-                for port, infos in scanner[host]["tcp"].items():
-                    if infos["state"] == "open":
-                        ports_ouverts.append(port)
-
-            resultats.append({
-                "ip": host,
+            results.append({
+                "ip": ip,
                 "nom_hote": nom_hote,
                 "ports_ouverts": ports_ouverts
             })
 
-        return resultats
+        return results
 
     except Exception as e:
-        print(f" Erreur lors du scan : {e}")
+        print(f"Erreur lors du scan des ports : {e}")
         return []
-
-#  Exemple d'utilisation :
-#plage = "192.168.1.0/24"  # Modifie selon ton réseau
-#resultats_scan = get_open_ports(plage)
-
-# Affichage des résultats
-#for machine in resultats_scan:
-    #print(f"{machine['ip']} ({machine['nom_hote']}) - Ports ouverts : {machine['ports_ouverts']}")
-
-def scan_network(network_range):
-    """
-    Détecte les machines connectées sur une plage d'IP sans scanner les ports.
-    
-    :param network_range: La plage d'IP à scanner (ex: "192.168.1.0/24")
-    :return: Liste des machines trouvées avec IP et nom d'hôte
-    """
-    scanner = nmap.PortScanner()
-    print(f" Scan des machines connectées sur {network_range}...")
-
-    try:
-        scanner.scan(hosts=network_range, arguments="-sn")  # Scan sans ports (-sn)
-
-        machines_trouvees = []
-        for host in scanner.all_hosts():
-            nom_hote = scanner[host].hostname() or "Inconnu"
-            machines_trouvees.append({"ip": host, "nom_hote": nom_hote})
-
-        return machines_trouvees
-
-    except Exception as e:
-        print(f" Erreur lors du scan : {e}")
-        return []
-
-#  Exemple d'utilisation :
-#plage = "192.168.1.0/24"  # Modifie selon ton réseau
-#resultats = scan_network(plage)
-
- #Affichage des résultats
-#for machine in resultats:
-    #print(f"{machine['ip']} ({machine['nom_hote']})")

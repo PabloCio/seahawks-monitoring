@@ -1,41 +1,36 @@
 
-#Fonction de latance
 import subprocess
 import socket
 import netifaces
-from features.scan import scan_network
 
-#pour windows dans result la lettre doit etre n et dans linux elle doit etre c
-def get_wan_latency():
-    try:
-        result = subprocess.run(["ping", "-n", "1", "8.8.8.8"], capture_output=True, text=True) # option -c pour Debian et -n pour Windows
-        #print(result.stdout)  # Affiche la sortie du ping
-        for line in result.stdout.split("\n"):
-            if "temps" in line or "time=" in line:
-                return float(line.split("time=" if "time=" in line else "temps=")[1].split(" ")[0])
-    except Exception as e:
-        print(f"Erreur : {e}")
-        return None
+_network_range = None
 
-latency = get_wan_latency()
-print(f"Latence vers Google : {latency} ms" if latency else "Impossible de mesurer la latence.")
-
-def get_hostname():
+def get_network_range():
     """
-    Retourne le nom d'hôte (hostname) de la machine locale.
+    Retourne la plage réseau sous la forme '192.168.1.138/24'.
+    Cette valeur est calculée une seule fois et stockée.
     """
-    try:
-        return socket.gethostname()
-    except Exception as e:
-        print(f" Erreur lors de la récupération du hostname : {e}")
-        return None
+    global _network_range
+    if _network_range is None:  # Si on n'a pas encore calculé la valeur
+        ip = get_local_ip()
+        cidr = get_cidr()
+        if ip and cidr is not None:
+            _network_range = f"{ip}/{cidr}"  # Stocke la valeur une fois
+        else:
+            _network_range = "Indisponible"
+    
+    return _network_range  # Retourne la même valeur pour chaque appel
 
-#  Exemple d'utilisation :
-#print(get_hostname())  # Affiche le hostname de la machine
+def update_network_range():
+    """
+    Réinitialise la plage réseau stockée pour forcer un recalcul.
+    """
+    global _network_range
+    _network_range = None  # Force un recalcul à la prochaine demande
 
 def get_local_ip():
     """
-    Retourne l'adresse IP locale de la machine.
+    Retourne l'adresse IP locale de la machine
     """
     try:
         # Crée un socket temporaire pour obtenir l'IP sans nécessiter de connexion réelle
@@ -47,24 +42,6 @@ def get_local_ip():
     except Exception as e:
         print(f" Erreur lors de la récupération de l'IP locale : {e}")
         return None
-    
-
-# Exemple d'utilisation :
-# print(get_local_ip())  # Affiche l'adresse IP locale
-
-def get_connected_devices_count(network_range):
-    """
-    Scanne le réseau et retourne le nombre d'appareils connectés (sans scanner les ports).
-    
-    :param network_range: La plage d'IP à scanner (ex: "192.168.1.0/24")
-    :return: Nombre d'appareils actifs détectés
-    """
-    devices = scan_network(network_range)  # Appelle la fonction scan_network
-    return len(devices)  # Retourne le nombre total de machines trouvées
-
-#  Exemple d'utilisation :
-#network_range = "192.168.1.0/24"  # Modifie selon ton réseau
-#print(f"Appareils connectés : {get_connected_devices_count(network_range)}")
 
 def get_netmask(ip_locale):
     """ Récupère le masque réseau de l'interface correspondant à l'IP locale. """
@@ -90,12 +67,24 @@ def get_cidr():
     except Exception as e:
         return print(f"Erreur lors de la récupération du CIDR : {e}")
 
-def get_plage():
-    # Retourne l'adresse IP locale avec le CIDR sous forme '192.168.1.50/24'. """
-    ip = get_local_ip()
-    cidr = get_cidr()
+def get_wan_latency():
+    try:
+        result = subprocess.run(["ping", "-n", "1", "8.8.8.8"], capture_output=True, text=True) # option -c pour Debian et -n pour Windows
+        #print(result.stdout)  # Affiche la sortie du ping
+        for line in result.stdout.split("\n"):
+            if "temps" in line or "time=" in line:
+                return float(line.split("time=" if "time=" in line else "temps=")[1].split(" ")[0])
+    except Exception as e:
+        print(f"Erreur : {e}")
+        return None
+    return None
 
-    if ip and cidr is not None:
-        return f"{ip}/{cidr}"
-    else:
+def get_hostname():
+    """
+    Retourne le nom d'hôte (hostname) de la machine locale.
+    """
+    try:
+        return socket.gethostname()
+    except Exception as e:
+        print(f" Erreur lors de la récupération du hostname : {e}")
         return None

@@ -1,50 +1,60 @@
 import tkinter as tk
-from features.scan import get_open_ports
+import os
+from features.scan import scan_network, get_open_ports
 from features.json import save_scan_results
 from features.db_session import insert_scan_results
-from features.system_info import get_plage 
+from features.system_info import get_network_range
+
 
 
 class ControlsFrame(tk.Frame):
-    # Zone contenant les boutons et la saisie de l'IP
     def __init__(self, parent, results_frame):
         super().__init__(parent, bg="grey", height=100)
         self.pack(fill="x", padx=5, pady=5)
 
+        self.results_frame = results_frame  # Stocke le tableau des résultats
 
-        # Récuparation des infos système
-        plage = get_plage()
+        # Variable Tkinter pour stocker l’entrée utilisateur (modifiable)
+        self.network_range_var = tk.StringVar(value=get_network_range())  # Définit la valeur initiale
 
-        # Stockage du tableau des résultats pour l'update
-        self.results_frame = results_frame 
-
-        # Variable Tkinter pour stocker l’entrée utilisateur
-        self.ip_entry_var = tk.StringVar()
-
-        # Champ de saisie pour la plage IP
-        self.ip_entry = tk.Entry(self, textvariable=self.ip_entry_var, width=20)
+        # Champ de saisie pour la plage IP (modifiable par l’utilisateur)
+        self.ip_entry = tk.Entry(self, textvariable=self.network_range_var, width=20)
         self.ip_entry.pack(pady=5)
-        self.ip_entry.insert(0, plage)
 
         # Bouton pour lancer le scan
         self.scan_button = tk.Button(self, text="Scan", command=self.start_scan)
         self.scan_button.pack(pady=5)
-    
-    def start_scan(self):
-        """Lance le scan réseau et met à jour le tableau des résultats."""
-        network_range = self.ip_entry_var.get()  # Récupère la plage entrée
-        if not network_range:
-            print("Erreur : veuillez entrer une plage réseau.")
-            return
-        
-        # Lancer le scan
-        results = get_open_ports(network_range)
 
-        # Mettre à jour le tableau
+    def start_scan(self):
+        """Lance le scan réseau avec la plage entrée par l'utilisateur."""
+
+        # 1 Récupère la plage entrée par l'utilisateur
+        network_range = self.network_range_var.get()
+        if not network_range.strip():  # Si l'utilisateur n'a rien mis, utiliser get_network_range()
+            network_range = get_network_range()
+
+        print(f"Lancement du scan sur : {network_range}")
+
+        # 2 On identifie les machines connectées
+        machines_trouvees, devices_count = scan_network(network_range)
+
+        # 3 Charge la liste des ip des machines trouvée
+        ips = [machine["ip"] for machine in machines_trouvees]
+
+        # 4 Lancer le scan des ports ouverts
+        results = get_open_ports(ips)
+        if not results:
+            return
+
+        # 5 Mettre à jour l'affichage
         self.results_frame.populate_results(results)
 
-        # Sauvegarder les résultats du scan
+        # 6 Sauvegarder les résultats
         save_scan_results(results)
 
-        # Enregistrer dans la base de données
-        insert_scan_results(results, harvester_ID = 1) #harvester_ID défini dans le python
+        # 7 Enregistrer dans la base de données
+        harvester_ID = int(os.getenv("HARVESTER_ID", 1))  # Charger `HARVESTER_ID` depuis `.env`
+        insert_scan_results(results, harvester_ID)
+
+        # 8 Met à jour le nombre de machine dans le dashboard
+        self.update_device_count(devices_count)
