@@ -39,8 +39,8 @@ class ResultsFrame(tk.Frame):
         self.tree.delete(*self.tree.get_children())  # Efface les anciennes entrées
 
         for machine in data:
-            hostname = machine.get["nom_hote","Inconnu"]  # Indique que hostname doit être le "nom_hote" ou "Inconnu"
-            ip = machine.get["ip", "Indisponible"]
+            hostname = machine.get("nom_hote","Inconnu")  # Indique que hostname doit être le "nom_hote" ou "Inconnu"
+            ip = machine.get("ip", "Indisponible")
             open_ports = machine.get("ports_ouverts", [])
             open_ports_str = ", ".join(map(str, open_ports)) if open_ports else "Aucun"
 

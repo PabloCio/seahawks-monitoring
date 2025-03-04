@@ -38,6 +38,8 @@ class ControlsFrame(tk.Frame):
         # 2 On identifie les machines connectées
         machines_trouvees, devices_count = scan_network(network_range)
 
+        print(f"Lancement du scan sur : {devices_count}")
+
         # 3 Charge la liste des ip des machines trouvée
         ips = [machine["ip"] for machine in machines_trouvees]
 
@@ -54,7 +56,9 @@ class ControlsFrame(tk.Frame):
 
         # 7 Enregistrer dans la base de données
         harvester_ID = int(os.getenv("HARVESTER_ID", 1))  # Charger `HARVESTER_ID` depuis `.env`
-        insert_scan_results(results, harvester_ID)
+        try:
+            insert_scan_results(results, harvester_ID)
+        except Exception as e:
+            print(f"Impossible d'envoyer les résultats en base de données : {e}")
 
         # 8 Met à jour le nombre de machine dans le dashboard
-        self.update_device_count(devices_count)

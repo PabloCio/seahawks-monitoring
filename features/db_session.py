@@ -86,12 +86,11 @@ def insert_scan_results(results, harvester_ID=None): # envoie les infos du harve
     if harvester_ID is None:
         harvester_ID = int(os.getenv("HARVESTER_ID"))
     
-    connexion = db_connect()
-    if not connexion:
-        print("Impossible de se connecter à la base de données.")
-        return
-    
     try:
+        connexion = db_connect()
+        if not connexion:
+            raise mariadb.Error("Impossible de se connecter à la base de données.")
+        
         cursor = connexion.cursor()
 
         # Convertir le dictionnaire en chaîne JSON

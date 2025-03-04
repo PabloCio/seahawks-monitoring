@@ -47,3 +47,4 @@ class InfoFrame(tk.Frame):
         self.device_count_label.config(text=f"Machines connectées : {device_count}")
 
         self.after(300000, self.update_info)
+        print("Update dashbord terminé")
