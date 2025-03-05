@@ -1,6 +1,6 @@
 import tkinter as tk
-from features.system_info import get_hostname, get_local_ip, get_wan_latency, get_network_range
-from features.scan import scan_network
+from features.scan import get_system_info
+from features.db_session import update_harvester_dashboard
 
 class InfoFrame(tk.Frame):
     def __init__(self, parent):
@@ -20,31 +20,31 @@ class InfoFrame(tk.Frame):
         self.device_count_label = tk.Label(self, text="Machines connectées : Chargement…", bg="grey", fg="black", font=("Arial", 12))
         self.device_count_label.pack()
 
-        # Lancer la mise à jour des infos après affichage
+        # Lancer la mise à jour des infos système
         self.after(100, self.update_info)
 
     def update_info(self):
         """Met à jour les informations après l'affichage."""
-        hostname = get_hostname()
-        local_ip = get_local_ip()
-        latency = get_wan_latency()
-        _, device_count = scan_network(get_network_range(), fast=True)
+        system_info = get_system_info()
 
         # Déterminer la couleur en fonction de la latence
         latency_color = "grey"
-        if latency is not None:
-            if latency < 50:
+        if system_info["latency"] is not None:
+            if system_info["latency"] < 50:
                 latency_color = "green"
-            elif latency < 150:
+            elif system_info["latency"] < 150:
                 latency_color = "orange"
             else:
                 latency_color = "red"
 
-        # Mettre à jour les Labels
-        self.hostname_label.config(text=f"Hostname : {hostname}")
-        self.local_ip_label.config(text=f"Adresse IP : {local_ip}")
-        self.latency_label.config(text=f"Latence : {latency} ms", bg=latency_color)
-        self.device_count_label.config(text=f"Machines connectées : {device_count}")
+         # Mettre à jour les Labels avec les nouvelles informations
+        self.hostname_label.config(text=f"Hostname : {system_info['hostname']}")
+        self.local_ip_label.config(text=f"Adresse IP : {system_info['local_ip']}")
+        self.latency_label.config(text=f"Latence : {system_info['latency']} ms", bg=latency_color)
+        self.device_count_label.config(text=f"Machines connectées : {system_info['device_count']}")
 
-        self.after(300000, self.update_info)
-        print("Update dashbord terminé")
+        # Lancer également la mise à jour de la base de données
+        update_harvester_dashboard(system_info, self.master.version)
+
+        self.after(300000, self.update_info)  # Rafraîchit toutes les 5 minutes
+        print(" Update dashboard terminé")

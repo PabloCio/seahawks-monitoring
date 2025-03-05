@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk  # Tkinter Treeview
-from features.json import save_scan_results, load_scan_results
+from features.json import load_scan_results
 
 #Zone affichant les résultats du scan sous forme de tableau
 

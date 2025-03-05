@@ -1,5 +1,5 @@
 import nmap
-from features.system_info import get_network_range
+from features.system_info import get_network_range, get_local_ip, get_hostname, get_wan_latency
 
 def scan_network(network_range=None, fast=False):
     """
@@ -16,7 +16,7 @@ def scan_network(network_range=None, fast=False):
     print(f" {scan_type} sur {network_range}...")
 
     try:
-        scanner.scan(hosts=network_range, arguments="-sn")
+        scanner.scan(hosts=network_range, arguments="-sn", timeout=10)
 
         machines_trouvees = []
         for host in scanner.all_hosts():
@@ -42,7 +42,17 @@ def get_open_ports(ips, ports="1-1000"):
     results = []
     try:
         for ip in ips:
-            scanner.scan(hosts=ip, arguments=f"-p {ports} -T4 -sS")
+            if not ip or not isinstance(ip, str):
+                print(f"IP invalide : {ip}")
+                continue
+            print(f"Scan des port {ip}")
+
+            scanner.scan(hosts=ip, arguments=f"-p {ports} -T4 -sS", timeout=10)
+
+            # Vérification que l'IP est bien présente dans les résultats avant d'y accéder
+            if ip not in scanner.all_hosts():
+                print(f"Aucun résultat pour {ip} : ignorée")
+                continue
 
             nom_hote = scanner[ip].hostname() or "Inconnu"
             ports_ouverts = [
@@ -60,3 +70,24 @@ def get_open_ports(ips, ports="1-1000"):
     except Exception as e:
         print(f"Erreur lors du scan des ports : {e}")
         return []
+    
+def get_system_info():
+    """
+    Récupère toutes les informations système en une seule fois :
+    - Hostname
+    - IP locale
+    - Latence WAN
+    - Nombre de machines connectées
+    """
+    hostname = get_hostname()
+    local_ip = get_local_ip()
+    latency = get_wan_latency()
+    _, device_count = scan_network(get_network_range(), fast=True)
+
+    return {
+        "hostname": hostname,
+        "local_ip": local_ip,
+        "latency": latency,
+        "device_count": device_count
+    }     
+    
