@@ -7,7 +7,9 @@ from features.json import load_scan_results  # Charger les derniers résultats d
 class MainApp(tk.Tk):
     def __init__(self, version):
         super().__init__()
-        self.title(f"Harvester | Client - Version {version}")
+        self.version = version # Stocke la version dans l'instance de l'application
+
+        self.title(f"Harvester | Client - Version {self.version}")
         self.geometry("700x600")
         self.configure(bg="#f0f0f0")
         self.resizable(width=False, height=False)
