@@ -4,7 +4,14 @@ import time
 import requests
 import threading
 
+from dotenv import load_dotenv
+from pathlib import Path
+
+dotenv_path = Path(__file__).resolve().parent.parent / ".env"
+load_dotenv(dotenv_path=dotenv_path)
+
 GITLAB_URL = os.getenv("GITLAB_URL")  # URL du dépôt GitLab
+print(f"GITLAB_URL = {GITLAB_URL}")
 GITLAB_TOKEN = os.getenv("GITLAB_TOKEN")  # Token d'accès API GitLab
 BRANCH = "main"
 CHECK_INTERVAL = 86400  # Vérification toutes les 24h
@@ -12,10 +19,11 @@ CHECK_INTERVAL = 86400  # Vérification toutes les 24h
 def get_remote_version():
     """ Récupère la dernière version disponible sur GitLab """
     headers = {"PRIVATE-TOKEN": GITLAB_TOKEN}
-    response = requests.get(f"{GITLAB_URL}/repository/tags", headers=headers)
+    response = requests.get(f"{GITLAB_URL}", headers=headers, verify=False)
 
     if response.status_code == 200:
         latest_tag = response.json()[0]["name"]  # Récupère le dernier tag
+        print(f"Dernière version détectée sur GitLab : {latest_tag}")
         return latest_tag
     else:
         print(f"Erreur lors de la récupération de la version GitLab : {response.status_code}")
