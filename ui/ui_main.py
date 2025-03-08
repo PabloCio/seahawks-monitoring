@@ -5,9 +5,9 @@ from ui.ui_results import ResultsFrame
 from features.json import load_scan_results  # Charger les derniers résultats du scan
 
 class MainApp(tk.Tk):
-    def __init__(self, version):
+    def __init__(self, version_app):
         super().__init__()
-        self.version = version # Stocke la version dans l'instance de l'application
+        self.version = version_app # Stocke la version dans l'instance de l'application
 
         self.title(f"Harvester | Client - Version {self.version}")
         self.geometry("700x600")
